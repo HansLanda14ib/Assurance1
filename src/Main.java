@@ -31,9 +31,9 @@ public class Main {
         */
 
         //Question 8/9
-        /*
+
         try {
-            List<Client> clients = requeteAssurance.ensClients("Ya");
+            List<Client> clients = requeteAssurance.ensClients("Bo");
 
             // Affichez la liste des clients triée par nom
             for (Client client : clients) {
@@ -47,7 +47,7 @@ public class Main {
             // Fermez la connexion lorsque vous avez terminé
             requeteAssurance.closeConnection();
         }
-        */
+
 
         //Question 10
         /*
@@ -132,13 +132,13 @@ public class Main {
             System.err.println("NumSecuException: " + e.getMessage());
         } */
         //Question 16
-
+        /*
         try {
             NumSecu numSecu = new NumSecu(2, 83, 8, 6, 712, 784, 39);
             Client client = new Client("hamza", "moustaid", numSecu, 1, "0684545778", 9000);
         } catch (NumSecuException | ClientException e) {
             System.err.println("NumSecuException: " + e.getMessage());
         }
-
+        */
     }
 }

@@ -109,14 +109,10 @@ public class RequeteAssurance {
     // Méthode pour récupérer la liste des clients dont le nom ou le prénom contient la chaîne de caractères nomprenom
     public List<Client> ensClients(String nomprenom) throws SQLException {
         List<Client> clients = new ArrayList<>();
-
         try {
             String query = "SELECT C.nClient, C.nom, C.prenom, C.telephone, C.revenu, C.nRisque, "
-                    + "N.nNumSecu, N.sexe, N.anneeNaissance, N.moisNaissance, N.departement, N.commune, N.ordre, N.cle, "
-                    + "R.nRisque, R.niveau "
-                    + "FROM CLIENT C "
+                    + "N.nNumSecu, N.sexe, N.anneeNaissance, N.moisNaissance, N.departement, N.commune, N.ordre, N.cle FROM CLIENT C "
                     + "JOIN NUMSECU N ON C.nNumSecu = N.nNumSecu "
-                    + "JOIN RISQUE R ON C.nRisque = R.nRisque "
                     + "WHERE UPPER(nom) LIKE ? OR UPPER(prenom) LIKE ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             nomprenom = "%" + nomprenom.toUpperCase() + "%";
@@ -125,33 +121,33 @@ public class RequeteAssurance {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                int nClient = resultSet.getInt("nClient");
-                String nom = resultSet.getString("nom");
-                String prenom = resultSet.getString("prenom");
-                String telephone = resultSet.getString("telephone");
-                double revenu = resultSet.getDouble("revenu");
-                int nRisque = resultSet.getInt("nRisque");
-                NumSecu numSecu = new NumSecu(
-                        resultSet.getInt("nNumSecu"),
+                NumSecu numSecu = new NumSecu(resultSet.getInt("nNumSecu"),
                         resultSet.getInt("sexe"),
                         resultSet.getInt("anneeNaissance"),
                         resultSet.getInt("moisNaissance"),
                         resultSet.getInt("departement"),
                         resultSet.getInt("commune"),
                         resultSet.getInt("ordre"),
-                        resultSet.getInt("cle")
-                );
-
-
+                        resultSet.getInt("cle"));
+                int nClient = resultSet.getInt("nClient");
+                String nom = resultSet.getString("nom");
+                String prenom = resultSet.getString("nom");
+                String telephone = resultSet.getString("nom");
+                double revenu = resultSet.getDouble("revenu");
+                int nRisque = resultSet.getInt("nRisque");
                 Client client = new Client(nClient, nom, prenom, numSecu, nRisque, telephone, revenu);
                 clients.add(client);
             }
 
+
         } catch (SQLException e) {
             throw e;
-        } catch (NumSecuException | ClientException e) {
+        } catch (NumSecuException e) {
+            throw new RuntimeException(e);
+        } catch (ClientException e) {
             throw new RuntimeException(e);
         }
+
 
         return clients;
     }

@@ -2,7 +2,7 @@ package exceptions;
 
 public class ClientException extends Exception {
     public ClientException() {
-        super("Num de sec est non conforme ");
+        super("client est non conforme ");
     }
 
     public ClientException(String message) {
