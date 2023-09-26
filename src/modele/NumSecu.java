@@ -1,5 +1,7 @@
 package modele;
 
+import exceptions.NumSecuException;
+
 public class NumSecu {
     private int nNumSecu;
     private int sexe;
@@ -10,7 +12,8 @@ public class NumSecu {
     private int ordre;
     private int cle;
 
-    public NumSecu(int nNumSecu, int sexe, int anneeNaissance, int moisNaissance, int departement, int commune, int ordre, int cle) {
+    public NumSecu(int nNumSecu, int sexe, int anneeNaissance, int moisNaissance, int departement, int commune, int ordre, int cle) throws NumSecuException {
+        validate(sexe, anneeNaissance, moisNaissance, departement, commune, ordre, cle);
         this.nNumSecu = nNumSecu;
         this.sexe = sexe;
         this.anneeNaissance = anneeNaissance;
@@ -21,7 +24,8 @@ public class NumSecu {
         this.cle = cle;
     }
 
-    public NumSecu(int sexe, int anneeNaissance, int moisNaissance, int departement, int commune, int ordre, int cle) {
+    public NumSecu(int sexe, int anneeNaissance, int moisNaissance, int departement, int commune, int ordre, int cle) throws NumSecuException {
+        validate(sexe, anneeNaissance, moisNaissance, departement, commune, ordre, cle);
         this.sexe = sexe;
         this.anneeNaissance = anneeNaissance;
         this.moisNaissance = moisNaissance;
@@ -29,6 +33,7 @@ public class NumSecu {
         this.commune = commune;
         this.ordre = ordre;
         this.cle = cle;
+
     }
 
     public int getnNumSecu() {
@@ -93,5 +98,57 @@ public class NumSecu {
 
     public void setCle(int cle) {
         this.cle = cle;
+    }
+
+    public void validate(int sexe, int anneeNaissance, int moisNaissance, int departement, int commune, int ordre, int cle) throws NumSecuException {
+        long n = numSecuSansCle(sexe, anneeNaissance, moisNaissance, departement, commune, ordre);
+        long cleCalculee = 97 - (n % 97);
+        if (sexe != 1 && sexe != 2) {
+            throw new NumSecuException("Invalid sexe value: " + sexe);
+        }
+
+        if (anneeNaissance < 0 || anneeNaissance > 99) {
+            throw new NumSecuException("Invalid anneeNaissance value: " + anneeNaissance);
+        }
+
+        if (moisNaissance < 1 || moisNaissance > 12) {
+            throw new NumSecuException("Invalid moisNaissance value: " + moisNaissance);
+        }
+
+        if (departement < 1 || departement > 95) {
+            throw new NumSecuException("Invalid departement value: " + departement);
+        }
+
+        if (commune < 1 || commune > 990) {
+            throw new NumSecuException("Invalid commune value: " + commune);
+        }
+
+        if (ordre < 1 || ordre > 999) {
+            throw new NumSecuException("Invalid ordre value: " + ordre);
+        }
+
+        if (cle < 1 || cle > 97 || cle != cleCalculee) {
+            throw new NumSecuException("Invalid cle value: " + cle);
+        }
+    }
+
+    public long numSecuSansCle(int sexe, int anneeNaissance, int moisNaissance, int departement, int commune, int ordre) {
+
+        String formattedSexe = String.format("%d", sexe);
+        String formattedAnneeNaissance = String.format("%02d", anneeNaissance);
+        String formattedMoisNaissance = String.format("%02d", moisNaissance);
+        String formattedDepartement = String.format("%02d", departement);
+        String formattedCommune = String.format("%03d", commune);
+        String formattedOrdre = String.format("%03d", ordre);
+
+        String numSecuSansCle = formattedSexe + formattedAnneeNaissance + formattedMoisNaissance +
+                formattedDepartement + formattedCommune + formattedOrdre;
+        return Long.parseLong(numSecuSansCle);
+    }
+
+    @Override
+    public String toString() {
+        return "" + sexe + anneeNaissance + moisNaissance + departement + commune + ordre + "" + cle;
+
     }
 }

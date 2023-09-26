@@ -1,5 +1,7 @@
 package metier;
 
+import exceptions.ClientException;
+import exceptions.NumSecuException;
 import modele.Client;
 import modele.NumSecu;
 import modele.Risque;
@@ -60,12 +62,10 @@ public class RequeteAssurance {
 
             // Exécutez la requête SQL pour récupérer les clients avec les données de NumSecu et Risque
             String query = "SELECT C.nClient, C.nom, C.prenom, C.telephone, C.revenu, C.nRisque, "
-                    + "N.nNumSecu, N.sexe, N.anneeNaissance, N.moisNaissance, N.departement, N.commune, N.ordre, N.cle, "
-                    + "R.nRisque, R.niveau "
-                    + "FROM CLIENT C "
+                    + "N.nNumSecu, N.sexe, N.anneeNaissance, N.moisNaissance, N.departement, N.commune, N.ordre, N.cle FROM CLIENT C "
                     + "JOIN NUMSECU N ON C.nNumSecu = N.nNumSecu "
-                    + "JOIN RISQUE R ON C.nRisque = R.nRisque "
                     + "ORDER BY C.nom";
+
 
             ResultSet resultSet = statement.executeQuery(query);
 
@@ -78,6 +78,7 @@ public class RequeteAssurance {
                 double revenu = resultSet.getDouble("revenu");
                 int nRisque = resultSet.getInt("nRisque");
                 // Créez un objet NumSecu avec les données
+
                 NumSecu numSecu = new NumSecu(
                         resultSet.getInt("nNumSecu"),
                         resultSet.getInt("sexe"),
@@ -98,6 +99,8 @@ public class RequeteAssurance {
         } catch (SQLException e) {
             // Gérez l'exception si une erreur se produit lors de l'exécution de la requête SQL
             throw e;
+        } catch (NumSecuException | ClientException e) {
+            throw new RuntimeException(e);
         }
 
         return clients;
@@ -145,8 +148,9 @@ public class RequeteAssurance {
             }
 
         } catch (SQLException e) {
-            // Gérez l'exception si une erreur se produit lors de l'exécution de la requête SQL
             throw e;
+        } catch (NumSecuException | ClientException e) {
+            throw new RuntimeException(e);
         }
 
         return clients;
@@ -157,7 +161,6 @@ public class RequeteAssurance {
         int cleGeneree = 0;
 
         try {
-            // Créez une requête SQL INSERT pour ajouter le numéro de sécurité sociale
             String query = "INSERT INTO NUMSECU (sexe, anneeNaissance, moisNaissance, departement, commune, ordre, cle) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -173,7 +176,6 @@ public class RequeteAssurance {
             preparedStatement.setInt(6, s.getOrdre());
             preparedStatement.setInt(7, s.getCle());
 
-            // Exécutez la requête SQL
             preparedStatement.executeUpdate();
 
             // Récupérez la clé générée automatiquement
@@ -245,6 +247,47 @@ public class RequeteAssurance {
             connection.setAutoCommit(true);
             connection.close();
         }
+        return false;
+    }
+
+    // Question 12 : Supprimer Client
+    public boolean supprimerClient(Client c) throws SQLException {
+        try {
+            String deleteNumSecuQuery = "DELETE FROM NUMSECU WHERE nNumSecu = ?";
+            PreparedStatement deleteNumSecuStatement = connection.prepareStatement(deleteNumSecuQuery);
+            deleteNumSecuStatement.setInt(1, c.getNumSecu().getnNumSecu());
+            deleteNumSecuStatement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            connection.close();
+        }
+    }
+
+    // Méthode pour mettre à jour un client existant (à l'exception du numéro de sécurité sociale)
+    public boolean miseAJourClient(Client c, String nouveauNom, String nouveauPrenom, String nouveauTelephone, Double nouveauRevenu, int nouveauNRisque) throws SQLException {
+        try {
+            String updateClientQuery = "UPDATE CLIENT SET nom = ?, prenom = ?, telephone = ?, revenu = ?, nRisque = ? WHERE nClient = ?";
+            PreparedStatement updateClientStatement = connection.prepareStatement(updateClientQuery);
+            updateClientStatement.setString(1, nouveauNom);
+            updateClientStatement.setString(2, nouveauPrenom);
+            updateClientStatement.setString(3, nouveauTelephone);
+            updateClientStatement.setDouble(4, nouveauRevenu);
+            updateClientStatement.setInt(5, nouveauNRisque);
+            updateClientStatement.setInt(6, c.getnClient());
+
+            int rowsAffected = updateClientStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            connection.close();
+        }
+
         return false;
     }
 

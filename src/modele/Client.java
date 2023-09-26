@@ -1,5 +1,7 @@
 package modele;
 
+import exceptions.ClientException;
+
 public class Client {
     private int nClient;
     private String nom;
@@ -9,7 +11,11 @@ public class Client {
     private String telephone;
     private double revenu;
 
-    public Client(int nClient, String nom, String prenom, NumSecu numSecu, int risque, String telephone, double revenu) {
+    public Client() {
+    }
+
+    public Client(int nClient, String nom, String prenom, NumSecu numSecu, int risque, String telephone, double revenu) throws ClientException {
+        validate(nom, prenom, telephone, revenu, risque, numSecu);
         this.nClient = nClient;
         this.nom = nom;
         this.prenom = prenom;
@@ -18,7 +24,9 @@ public class Client {
         this.telephone = telephone;
         this.revenu = revenu;
     }
-    public Client( String nom, String prenom, NumSecu numSecu, int risque, String telephone, double revenu) {
+
+    public Client(String nom, String prenom, NumSecu numSecu, int risque, String telephone, double revenu) throws ClientException {
+        validate(nom, prenom, telephone, revenu, risque, numSecu);
         this.nom = nom;
         this.prenom = prenom;
         this.numSecu = numSecu;
@@ -81,5 +89,24 @@ public class Client {
 
     public void setRevenu(double revenu) {
         this.revenu = revenu;
+    }
+
+    private void validate(String nom, String prenom, String telephone, double revenu, int nRisque, NumSecu numSecu) throws ClientException {
+        if (nom.isEmpty() || prenom.isEmpty()) {
+            throw new ClientException("Le nom et le prénom ne peuvent pas être vides");
+        }
+
+        if (revenu < 0) {
+            throw new ClientException("Le revenu doit être positif");
+        }
+
+        if (nRisque == 0) {
+            throw new ClientException("Le risque ne peut pas être null");
+        }
+
+        if (numSecu == null) {
+            throw new ClientException("Le numéro de sécurité sociale ne peut pas être null");
+        }
+
     }
 }
