@@ -11,9 +11,23 @@ import java.sql.Statement;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-        RequeteAssurance requeteAssurance = new RequeteAssurance();
-
+    public static void main(String[] args) throws SQLException {
+        //RequeteAssurance requeteAssurance = new RequeteAssurance();
+       /* String text = "012345678912345";
+        int sexe = Character.getNumericValue(text.charAt(0));
+        int anneeNaissance = Integer.parseInt(text.substring(1, 3));
+        int moisNaissance = Integer.parseInt(text.substring(3, 5));
+        int departement = Integer.parseInt(text.substring(5, 7));
+        int commune = Integer.parseInt(text.substring(7, 10));
+        int ordre = Integer.parseInt(text.substring(10, 13));
+        int cle = Integer.parseInt(text.substring(13));
+        System.out.println(sexe);
+        System.out.println(anneeNaissance);
+        System.out.println(moisNaissance);
+        System.out.println(departement);
+        System.out.println(commune);
+        System.out.println(ordre);
+        System.out.println(cle); */
         //Question 7
        /* try {
             List<Risque> risques = requeteAssurance.ensRisques();
@@ -31,7 +45,7 @@ public class Main {
         */
 
         //Question 8/9
-
+/*
         try {
             List<Client> clients = requeteAssurance.ensClients("Bo");
 
@@ -48,7 +62,7 @@ public class Main {
             requeteAssurance.closeConnection();
         }
 
-
+*/
         //Question 10
         /*
         try {

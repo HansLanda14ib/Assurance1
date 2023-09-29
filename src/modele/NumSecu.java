@@ -12,6 +12,26 @@ public class NumSecu {
     private int ordre;
     private int cle;
 
+    public NumSecu(String numSecu) throws NumSecuException {
+
+        int sexe = Character.getNumericValue(numSecu.charAt(0));
+        int anneeNaissance = Integer.parseInt(numSecu.substring(1, 3));
+        int moisNaissance = Integer.parseInt(numSecu.substring(3, 5));
+        int departement = Integer.parseInt(numSecu.substring(5, 7));
+        int commune = Integer.parseInt(numSecu.substring(7, 10));
+        int ordre = Integer.parseInt(numSecu.substring(10, 13));
+        int cle = Integer.parseInt(numSecu.substring(13));
+
+        validate(sexe, anneeNaissance, moisNaissance, departement, commune, ordre, cle);
+        this.sexe = sexe;
+        this.anneeNaissance = anneeNaissance;
+        this.moisNaissance = moisNaissance;
+        this.departement = departement;
+        this.commune = commune;
+        this.ordre = ordre;
+        this.cle = cle;
+    }
+
     public NumSecu(int nNumSecu, int sexe, int anneeNaissance, int moisNaissance, int departement, int commune, int ordre, int cle) throws NumSecuException {
         validate(sexe, anneeNaissance, moisNaissance, departement, commune, ordre, cle);
         this.nNumSecu = nNumSecu;
@@ -104,7 +124,7 @@ public class NumSecu {
         long n = numSecuSansCle(sexe, anneeNaissance, moisNaissance, departement, commune, ordre);
         long cleCalculee = 97 - (n % 97);
         if (sexe != 1 && sexe != 2) {
-            throw new NumSecuException("Invalid sexe value: " + sexe);
+            throw new NumSecuException("Invalid " + sexe + ". le sexe et vaut 1 pour les hommes et 2 pour les femmes");
         }
 
         if (anneeNaissance < 0 || anneeNaissance > 99) {
@@ -112,19 +132,19 @@ public class NumSecu {
         }
 
         if (moisNaissance < 1 || moisNaissance > 12) {
-            throw new NumSecuException("Invalid moisNaissance value: " + moisNaissance);
+            throw new NumSecuException("Invalid " + moisNaissance + ". le mois de naissanc entre 01 et 12");
         }
 
         if (departement < 1 || departement > 95) {
-            throw new NumSecuException("Invalid departement value: " + departement);
+            throw new NumSecuException("Invalid " + departement + "le département de naissance (entre 01 et 95).");
         }
 
         if (commune < 1 || commune > 990) {
-            throw new NumSecuException("Invalid commune value: " + commune);
+            throw new NumSecuException("Invalid " + commune + "le code officiel de la commune de naissance (entre 001 et 990)");
         }
 
         if (ordre < 1 || ordre > 999) {
-            throw new NumSecuException("Invalid ordre value: " + ordre);
+            throw new NumSecuException("Invalid " + ordre + "le numéro d’ordre de la naissance dans le mois et la commune (entre 001 et 999)");
         }
 
         if (cle < 1 || cle > 97 || cle != cleCalculee) {
@@ -148,7 +168,7 @@ public class NumSecu {
 
     @Override
     public String toString() {
-        return "" + sexe + anneeNaissance + moisNaissance + departement + commune + ordre + "" + cle;
+        return String.valueOf(sexe) + String.valueOf(anneeNaissance) + String.valueOf(moisNaissance) + String.valueOf(departement) + String.valueOf(commune) + String.valueOf(ordre) + String.valueOf(cle);
 
     }
 }

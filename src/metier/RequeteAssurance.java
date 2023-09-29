@@ -11,17 +11,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequeteAssurance {
+    private static RequeteAssurance rq;
     private Connection connection;
 
     // Constructeur par défaut
-    public RequeteAssurance() {
+    private RequeteAssurance() throws SQLException {
         // Appel de la méthode pour établir la connexion dans le constructeur
         connect();
     }
 
-    public Connection getConnection() {
-        return connection;
+    public static RequeteAssurance getInstance() throws SQLException {
+        if (rq == null) {
+            rq = new RequeteAssurance();
+        }
+        return rq;
     }
+
 
     public List<Risque> ensRisques() throws SQLException {
         List<Risque> risques = new ArrayList<>();
@@ -129,10 +134,11 @@ public class RequeteAssurance {
                         resultSet.getInt("commune"),
                         resultSet.getInt("ordre"),
                         resultSet.getInt("cle"));
+                //oublie pas de corriger le bug dans le code de Yasmine
                 int nClient = resultSet.getInt("nClient");
                 String nom = resultSet.getString("nom");
-                String prenom = resultSet.getString("nom");
-                String telephone = resultSet.getString("nom");
+                String prenom = resultSet.getString("prenom");
+                String telephone = resultSet.getString("telephone");
                 double revenu = resultSet.getDouble("revenu");
                 int nRisque = resultSet.getInt("nRisque");
                 Client client = new Client(nClient, nom, prenom, numSecu, nRisque, telephone, revenu);
@@ -181,8 +187,7 @@ public class RequeteAssurance {
             }
 
         } catch (SQLException e) {
-            // Gérez l'exception si une erreur se produit lors de l'ajout
-            throw e;
+            throw new SQLException("Le numéro de securité doit être unique.");
         }
 
         return cleGeneree;
@@ -190,7 +195,7 @@ public class RequeteAssurance {
 
 
     // Méthode privée pour établir la connexion à la base de données
-    private void connect() {
+    private void connect() throws SQLException {
         String jdbcUrl = "jdbc:mysql://localhost:3306/tp_assurance";
         String username = "root";
         String password = "";
@@ -210,8 +215,8 @@ public class RequeteAssurance {
             System.err.println("Le pilote JDBC MySQL n'a pas été trouvé.");
             e.printStackTrace();
         } catch (SQLException e) {
-            System.err.println("Erreur lors de l'établissement de la connexion à la base de données.");
-            e.printStackTrace();
+            throw new SQLException("Erreur lors de l'établissement de la connexion à la base de données.");
+
         }
     }
 
@@ -241,7 +246,7 @@ public class RequeteAssurance {
             throw e;
         } finally {
             connection.setAutoCommit(true);
-            connection.close();
+            //connection.close();
         }
         return false;
     }
@@ -256,8 +261,6 @@ public class RequeteAssurance {
             return true;
         } catch (SQLException e) {
             throw e;
-        } finally {
-            connection.close();
         }
     }
 
@@ -280,8 +283,6 @@ public class RequeteAssurance {
             }
         } catch (SQLException e) {
             throw e;
-        } finally {
-            connection.close();
         }
 
         return false;
